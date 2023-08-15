@@ -18,8 +18,9 @@ class WebsiteSpider(scrapy.Spider):
         else:
             self.start_urls = []
 
-    def validate_domain(self):
-        pass
+    @staticmethod
+    def clean_phone_numbers(phone_numbers):
+        return [''.join(filter(lambda x: x.isdigit() or x in ["(", ")", "+"], num)).strip() for num in phone_numbers]
 
     @staticmethod
     def create_domain_list_from_file(file_path):
@@ -30,8 +31,7 @@ class WebsiteSpider(scrapy.Spider):
         logo_url = self.find_logo(response)
         body_text = response.text
         phone_numbers = re.findall(r'[+(]?[1-9][0-9 .\-()]{8,}[0-9]', body_text)
-        cleaned_numbers = [''.join(filter(lambda x: x.isdigit() or x in ["(", ")", "+"], num)).strip() for num in phone_numbers]
-
+        cleaned_numbers = self.clean_phone_numbers(phone_numbers)
         yield {
             'url': response.url,
             'logo': logo_url,
