@@ -9,29 +9,15 @@ from website_data_extractor.website_data_extractor.spiders.web_spider import Web
 
 
 class TestWebsiteSpider(unittest.TestCase):
-    def test_create_domain_list_from_file(self):
-        spider = WebsiteSpider(file_path='testfile.txt')
-        test_file_path = 'testfile.txt'
-        with open(test_file_path, 'w') as file:
-            file.write("http://example1.com\n")
-            file.write("http://example2.com")
-        result = spider.create_domain_list_from_file(test_file_path)
-        expected = ["http://example1.com\n", "http://example2.com"]
-        self.assertEqual(result, expected)
 
-    def test_create_domain_list_from_empty_file(self):
-        spider = WebsiteSpider(file_path='testfile.txt')
-        test_file_path = 'testfile.txt'
-        with open(test_file_path, 'w') as file:
-            file.write("")
-        result = spider.create_domain_list_from_file(test_file_path)
-        expected = []
-        self.assertEqual(result, expected)
+    def test_clean_phone_numbers(self):
+        assert WebsiteSpider.clean_phone_numbers(["+1 (800) 123-4567"]) == ["+1 (800) 1234567"]
 
-    def test_create_domain_list_from_file_with_nonexistent_file(self):
-        spider = WebsiteSpider(file_path="path/to/nonexistent_file.txt")
-        with self.assertRaises(FileNotFoundError):
-            spider.create_domain_list_from_file("path/to/nonexistent_file.txt")
+        assert WebsiteSpider.clean_phone_numbers(["AB+1 (800) 123-4567CD"]) == ["+1 (800) 1234567"]
+
+        assert WebsiteSpider.clean_phone_numbers([]) == []
+
+        assert WebsiteSpider.clean_phone_numbers(["  +1 (800) 123-4567  "]) == ["+1 (800) 1234567"]
 
     def test_parse(self):
 

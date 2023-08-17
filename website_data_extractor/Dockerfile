@@ -1,17 +1,9 @@
-# Use uma imagem base do Python 3.10
 FROM python:3.10-slim
 
-# Defina o diretório de trabalho no container
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copie o arquivo de requisitos para o container
-COPY requirements.txt ./
+COPY . /app
 
-# Instale os pacotes necessários
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copie todo o projeto para o container
-COPY . .
-
-# Comando para executar o Spider quando o container for iniciado
-CMD [ "scrapy", "crawl", "website" ]
+CMD ["scrapy", "crawl", "website", "-o", "output_file.json"]
